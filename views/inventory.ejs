@@ -13,7 +13,7 @@
                 </h1>
             </div>
             <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
-                <form method="GET" action="/inventario" class="flex items-center flex-grow md:flex-grow-0">
+                <form method="GET" action="/inventary" class="flex items-center flex-grow md:flex-grow-0">
                     <div class="relative flex-grow">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -69,8 +69,8 @@
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"><%= producto.stock %></span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="/productos/<%= producto.id %>/editar" class="text-primary hover:text-primary-700 mr-3">Editar</a>
-                                        <form action="/productos/<%= producto.id %>/eliminar" method="POST" class="inline" onsubmit="return confirm(JSON.stringify('¿Estás seguro de que quieres eliminar este producto: ' + producto.nombre + '?'))">
+                                        <a href="/products/<%= producto.id %>/edit" class="text-primary hover:text-primary-700 mr-3">Editar</a>
+                                        <form action="/products/<%= producto.id %>/delete" method="POST" class="inline" onsubmit="return confirm(JSON.stringify('¿Estás seguro de que quieres eliminar este producto: ' + producto.nombre + '?'))">
                                             <button type="submit" class="text-red-600 hover:text-red-800">Eliminar</button>
                                         </form>
                                     </td>

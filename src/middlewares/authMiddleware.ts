@@ -4,8 +4,17 @@ import { Role } from "@prisma/client";
 // Interface for the session user
 declare module "express-session" {
   interface SessionData {
-    user?: any
+    user?: any,
+    cart?: CartItem[];
   }
+}
+
+export interface CartItem {
+  productId: string;
+  nombre: string;
+  precio: number;
+  quantity: number;
+  imagen?: string; // URL de la primera imagen para mostrar en el carrito
 }
 
 /**
@@ -56,7 +65,7 @@ export const ensureAdmin = (req: Request, res: Response, next: NextFunction) => 
   if (req.session.user.rol === Role.ADMIN) {
     return next();
   }
-  
+
   res.status(403).render("error", {
     title: "Acceso Denegado",
     message: "No tienes permiso para acceder a esta página.",

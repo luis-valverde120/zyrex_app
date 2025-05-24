@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-gray-100">
+<head>
+    <%- include('partials/head', { titulo: locals.producto ? producto.nombre : 'Detalle del Producto' }) %>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <%- include('partials/header') %>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <% if (locals.producto) { %>
+            <div class="bg-white shadow-xl rounded-lg overflow-hidden">
+                <div class="md:flex">
+                    <div class="md:w-1/2">
+                        <% if (producto.imagenes && producto.imagenes.length > 0 && producto.imagenes[0]) { %>
+                            <img src="<%= producto.imagenes[0] %>" alt="Imagen de <%= producto.nombre %>" class="w-full h-auto md:h-full max-h-[500px] object-cover">
+                            <% } else { %>
+                            <img src="https://via.placeholder.com/600x500?text=Zyrex+-+Sin+Imagen" alt="Producto sin imagen" class="w-full h-auto md:h-full max-h-[500px] object-cover">
+                        <% } %>
+                    </div>
+
+                    <div class="md:w-1/2 p-6 md:p-8 flex flex-col">
+                        <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-3"><%= producto.nombre %></h1>
+                        
+                        <% if (producto.categoria) { %>
+                            <p class="text-sm text-gray-500 mb-1">Categoría: 
+                                <a href="/catalogo?categoria=<%= producto.categoria.id %>" class="text-primary hover:underline"><%= producto.categoria.nombre %></a>
+                            </p>
+                        <% } %>
+                        <% if (producto.artesano) { %>
+                             <p class="text-sm text-gray-500 mb-4">Artesano: 
+                                <a href="/artesanos/<%= producto.artesano.id %>" class="text-primary hover:underline"><%= producto.artesano.nombre %></a>
+                             </p>
+                        <% } %>
+
+                        <p class="text-3xl font-semibold text-primary mb-4">$<%= producto.precio.toFixed(2) %></p>
+                        
+                        <% if (producto.stock > 0) { %>
+                            <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold mb-4 px-2.5 py-0.5 rounded-full">
+                                Disponible (<%= producto.stock %> unidades)
+                            </span>
+                        <% } else { %>
+                            <span class="inline-block bg-red-100 text-red-800 text-xs font-semibold mb-4 px-2.5 py-0.5 rounded-full">
+                                Agotado
+                            </span>
+                        <% } %>
+
+                        <div class="prose prose-sm text-gray-600 mb-6 flex-grow">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Descripción:</h3>
+                            <% if (producto.descripcion) { %>
+                                <p><%= producto.descripcion.replace(/\n/g, '<br>') %></p> <% } else { %>
+                                <p>Este producto no tiene una descripción detallada aún.</p>
+                            <% } %>
+                        </div>
+                        
+                        <% if (producto.stock > 0) { %>
+                            <form action="/cart/add" method="POST" class="mt-auto">
+                                <input type="hidden" name="productId" value="<%= producto.id %>">
+                                <div class="flex items-center mb-4">
+                                    <label for="quantity" class="mr-3 text-sm font-medium text-gray-700">Cantidad:</label>
+                                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="<%= producto.stock %>" 
+                                           class="w-20 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm">
+                                </div>
+                                <button type="submit"
+                                        class="w-full bg-gray-800 text-white py-3 px-6 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50 transition duration-150 text-lg font-semibold">
+                                    Agregar al Carrito
+                                </button>
+                            </form>
+                        <% } else { %>
+                             <button type="button"
+                                     disabled
+                                     class="w-full bg-gray-300 text-gray-500 py-3 px-6 rounded-md cursor-not-allowed text-lg font-semibold mt-auto">
+                                 Producto Agotado
+                             </button>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        <% } else { %>
+            <p class="text-center text-xl text-gray-700">Producto no encontrado.</p>
+        <% } %>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

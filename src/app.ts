@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import cors from "cors";
 import { authRouter, artisanRouter, productRouter } from "./routes";
+import { Prisma } from "@prisma/client";
+import cartRouter from "./routes/cartRoutes";
 
 // Extiende la interfaz SessionData para incluir 'user'
 declare module "express-session" {
@@ -56,18 +58,58 @@ app.get('/favicon.ico', (req: Request, res: Response) => {
     res.status(204).send();
 });
 
-// Ruta de prueba para EJS (Asegúrate de tener una)
-app.get('/', (req: Request, res: Response) => {
-    res.render('index', { 
-        titulo: 'Zyrex EJS Test',
-        productos: [], // Pasa un array vacío si no cargas datos
-        user: req.session.user || null // Pasa null si no hay usuario
+// homepage route
+app.get('/', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1; // Obtener el número de página desde la query, por defecto 1
+    const limit = parseInt(req.query.limit as string) || 8; // Obtener el límite de productos por página, por defecto 10
+    const skip = (page - 1) * limit; // Calcular el número de productos a saltar
+
+    const whereCondition: Prisma.ProductoWhereInput =  {
+      stock: {
+        gt: 0 // Solo productos con stock mayor a 0
+      }
+    }
+
+    if (!prisma) {
+      throw new Error("Prisma client is not initialized.");
+    }
+
+    const [products, totalCount] = await prisma.$transaction([
+      prisma.producto.findMany({
+        where: whereCondition,
+        skip: skip,
+        take: limit,
+        orderBy: {
+          nombre: 'asc' // Ordenar por nombre ascendente
+        },
+        include: { categoria: true } // Incluir la categoría del producto
+      }),
+      prisma.producto.count({ where: whereCondition }) // Contar el total de productos que cumplen la condición
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit); // Calcular el número total de páginas
+
+    res.render('index', {
+      titulo: 'Inicio',
+      productos: products,
+      currentPage: page,
+      totalPages,
+      limit,
+      totalCount,
     });
+
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    next(error);
+  }
+
 });
 
 app.use(authRouter);
 app.use(artisanRouter);
 app.use("/products", productRouter);
+app.use("/cart", cartRouter);
 
 // ---- MANEJO DE RUTAS NO ENCONTRADAS (404) ----
 app.use((req: Request, res: Response, next: NextFunction) => {

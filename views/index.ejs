@@ -1,14 +1,109 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full bg-gray-50">
 <head>
-    <%- include('partials/head', { titulo: 'Página de Inicio' }) %>
+    <%- include('partials/head', { titulo: locals.titulo }) %>
 </head>
-<body class="bg-gray-100"> <%- include('partials/header') %> <main class="container mx-auto px-4 py-8">
-        <h1>¡Bienvenido a la página principal!</h1>
-        <p>Aquí va el contenido de tu página.</p>
-        </main>
+<body class="flex flex-col min-h-screen">
+
+    <%- include('partials/header') %>
+
+    <main class="flex-grow container mx-auto px-4 py-12">
+        <section class="text-center bg-white p-12 rounded-lg shadow-lg mb-12">
+            <h1 class="text-5xl font-extrabold text-gray-900 mb-4">
+                Descubre la Magia de Tulcán en <span class="text-primary">Zyrex</span>
+            </h1>
+            <p class="text-xl text-gray-600 mb-8">
+                Apoyando a nuestros artesanos locales. Encuentra piezas únicas hechas con corazón.
+            </p>
+            <a href="/catalogo" class="bg-primary text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-primary-700 transition duration-300">
+                Explorar Catálogo Completo
+            </a>
+        </section>
+
+        <section>
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Nuestras Artesanías</h2>
+
+            <% if (locals.totalCount === 0) { %>
+                <div class="text-center py-12 bg-white rounded-lg shadow-md">
+                    <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H6.911a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661Z" />
+                    </svg>
+                    <h3 class="mt-2 text-xl font-medium text-gray-900">Aún no tenemos productos</h3>
+                    <p class="mt-1 text-sm text-gray-500">Estamos trabajando para traer las mejores artesanías de Tulcán. ¡Vuelve pronto!</p>
+                </div>
+            <% } else if (locals.productos && productos.length > 0) { %>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <% productos.forEach(function(producto) { %>
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transform hover:scale-105 transition-transform duration-300">
+                            <a href="/products/<%= producto.id %>" class="block">
+                                <img src="<%= (producto.imagenes && producto.imagenes.length > 0) ? producto.imagenes[0] : 'https://via.placeholder.com/300x250?text=Zyrex' %>"
+                                     alt="<%= producto.nombre %>"
+                                     class="w-full h-56 object-cover">
+                            </a>
+                            <div class="p-5 flex flex-col flex-grow">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1 truncate">
+                                    <a href="/products/<%= producto.id %>" class="hover:text-primary"><%= producto.nombre %></a>
+                                </h3>
+                                <% if (producto.categoria) { %>
+                                    <p class="text-xs text-gray-500 mb-2"><%= producto.categoria.nombre %></p>
+                                <% } %>
+                                <p class="text-2xl font-bold text-primary mb-3 mt-auto">$<%= producto.precio.toFixed(2) %></p>
+                                <form action="/cart/add" method="POST">
+                                    <input type="hidden" name="productId" value="<%= producto.id %>">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit"
+                                            class="w-full bg-gray-800 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-150">
+                                        Agregar al Carrito
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <% if (locals.totalPages > 1) { %>
+                    <nav aria-label="Paginación" class="mt-12 flex items-center justify-between border-t border-gray-200 px-4 sm:px-0">
+                        <div class="-mt-px w-0 flex-1 flex">
+                            <% if (currentPage > 1) { %>
+                                <a href="/?page=<%= currentPage - 1 %>&limit=<%= limit %>"
+                                   class="border-t-2 border-transparent pt-4 pr-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    <svg class="mr-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                    Anterior
+                                </a>
+                            <% } %>
+                        </div>
+
+                        <div class="hidden md:-mt-px md:flex">
+                            <span class="border-transparent text-gray-500 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
+                                Página <%= currentPage %> de <%= totalPages %>
+                            </span>
+                            </div>
+
+                        <div class="-mt-px w-0 flex-1 flex justify-end">
+                            <% if (currentPage < totalPages) { %>
+                                <a href="/?page=<%= currentPage + 1 %>&limit=<%= limit %>"
+                                   class="border-t-2 border-transparent pt-4 pl-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                    Siguiente
+                                    <svg class="ml-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            <% } %>
+                        </div>
+                    </nav>
+                <% } %>
+            <% } else if (locals.totalCount > 0 && productos.length === 0 && currentPage > 1) { %>
+                 <div class="text-center py-12 bg-white rounded-lg shadow-md">
+                    <h3 class="mt-2 text-xl font-medium text-gray-900">No hay más productos para mostrar</h3>
+                    <p class="mt-1 text-sm text-gray-500">Has llegado al final de nuestro catálogo.</p>
+                    <a href="/?page=1&limit=<%= limit %>" class="mt-4 inline-block text-primary hover:text-primary-700">Volver a la primera página</a>
+                </div>
+            <% } %>
+        </section>
+    </main>
 
     <%- include('partials/footer') %>
-
-    </body>
+</body>
 </html>
