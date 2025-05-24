@@ -4,7 +4,7 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import cors from "cors";
-import { authRouter } from "./routes";
+import { authRouter, artisanRouter, productRouter } from "./routes";
 
 // Extiende la interfaz SessionData para incluir 'user'
 declare module "express-session" {
@@ -61,12 +61,13 @@ app.get('/', (req: Request, res: Response) => {
     res.render('index', { 
         titulo: 'Zyrex EJS Test',
         productos: [], // Pasa un array vacío si no cargas datos
-        user: null // Pasa null si no hay usuario
+        user: req.session.user || null // Pasa null si no hay usuario
     });
 });
 
 app.use(authRouter);
-
+app.use(artisanRouter);
+app.use("/products", productRouter);
 
 // ---- MANEJO DE RUTAS NO ENCONTRADAS (404) ----
 app.use((req: Request, res: Response, next: NextFunction) => {

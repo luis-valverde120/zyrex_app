@@ -57,7 +57,7 @@ async function loginUser(req: Request, res: Response, next: NextFunction): Promi
       res.redirect("/");
     });
 
-
+    
   } catch (error) {
     console.error("Error checking user:", error);
     // this is for unexpected errors

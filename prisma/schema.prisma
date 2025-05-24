@@ -8,7 +8,6 @@ generator client {
 }
 
 
-// 🧍 Usuarios
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -18,9 +17,13 @@ model User {
   telefono  String?
   rol       Role     @default(CLIENTE)
   pedidos   Pedido[]
-  carrito   Carrito? // Relación uno a uno: Un usuario tiene un carrito (opcional si no todos tienen uno activo)
+  carrito   Carrito?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // 👇 Añade esta relación si no la tienes:
+  // Un usuario (si es artesano) puede tener muchos productos
+  productosDeArtesano Producto[] @relation("ArtesanoProductos")
 }
 
 enum Role {
@@ -29,22 +32,27 @@ enum Role {
   ADMIN
 }
 
-// 🛍️ Productos
+
 model Producto {
-  id               String           @id @default(cuid())
-  nombre           String
-  descripcion      String?
-  precio           Float            // O Decimal
-  stock            Int              @default(0)
-  imagenes         String[]
-  categoriaId      String?
-  categoria        Categoria?       @relation(fields: [categoriaId], references: [id])
-  // artesanoId       String?          // Si un producto es creado por un artesano específico
-  // artesano         User?            @relation("ArtesanoProductos", fields: [artesanoId], references: [id]) // Necesitaríamos un nombre de relación si User tiene múltiples relaciones a Producto
-  itemsPedido      ItemPedido[]
-  itemsCarrito     ItemCarrito[]    // Relación: Un producto puede estar en muchos items de carrito
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  id            String    @id @default(cuid())
+  nombre        String
+  descripcion   String?
+  precio        Float
+  stock         Int       @default(0)
+  imagenes      String[]
+  categoriaId   String?
+  categoria     Categoria? @relation(fields: [categoriaId], references: [id])
+  itemsPedido   ItemPedido[]
+  itemsCarrito  ItemCarrito[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // 👇 Añade estos campos si no los tienes:
+  // ID del usuario artesano que creó/posee el producto
+  artesanoId    String // Puede ser opcional si no todos los productos son de artesanos específicos,
+                       // o String si es mandatorio. Para inventario de artesano, debería ser String y no opcional.
+                       // Ajusta según tu lógica. Si es String, elimina el '?'
+  artesano      User?    @relation("ArtesanoProductos", fields: [artesanoId], references: [id])
 }
 
 // 🏷️ Categorías de Productos

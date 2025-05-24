@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-gray-100">
+<head>
+    <%- include('partials/head', { titulo: locals.titulo || 'Mi Inventario - Zyrex' }) %>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <%- include('partials/header') %> <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-6 md:flex md:items-center md:justify-between">
+            <div class="flex-1 min-w-0">
+                <h1 class="text-3xl font-bold leading-tight text-gray-900">
+                    <%= locals.titulo %>
+                </h1>
+            </div>
+            <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+                <form method="GET" action="/inventario" class="flex items-center flex-grow md:flex-grow-0">
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input type="search" name="q" id="search-product" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-l-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
+                               placeholder="Buscar por nombre..."
+                               value="<%= locals.searchTerm || '' %>"> </div>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+                        Buscar
+                    </button>
+                </form>
+                <a href="/products/new"
+                   class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v4h4a1 1 0 110 2h-4v4a1 1 0 11-2 0v-4H5a1 1 0 110-2h4V4a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Añadir Producto
+                </a>
+            </div>
+        </div>
+
+        <% if (locals.productos && locals.productos.length > 0) { %>
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <% locals.productos.forEach(function(producto) { %>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <img class="h-12 w-12 rounded-md object-cover" src="<%= (producto.imagenes && producto.imagenes.length > 0) ? producto.imagenes[0] : 'https://via.placeholder.com/50?text=Sin+Imagen' %>" alt="<%= producto.nombre %>">
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900"><%= producto.nombre %></div>
+                                        <% if (producto.categoria) { %>
+                                            <div class="text-xs text-gray-500"><%= producto.categoria.nombre %></div>
+                                        <% } %>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">$<%= producto.precio.toFixed(2) %></div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"><%= producto.stock %></span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="/productos/<%= producto.id %>/editar" class="text-primary hover:text-primary-700 mr-3">Editar</a>
+                                        <form action="/productos/<%= producto.id %>/eliminar" method="POST" class="inline" onsubmit="return confirm(JSON.stringify('¿Estás seguro de que quieres eliminar este producto: ' + producto.nombre + '?'))">
+                                            <button type="submit" class="text-red-600 hover:text-red-800">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="text-center bg-white p-12 rounded-lg shadow-lg">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                </svg>
+                <h2 class="mt-2 text-xl font-semibold text-gray-800">Tu inventario está vacío</h2>
+                <p class="mt-1 text-sm text-gray-500">
+                    Aún no has añadido ningún producto. ¡Empieza a mostrar tus creaciones!
+                </p>
+                <div class="mt-6">
+                    <a href="/products/new"
+                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v4h4a1 1 0 110 2h-4v4a1 1 0 11-2 0v-4H5a1 1 0 110-2h4V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        Añadir mi Primer Producto
+                    </a>
+                </div>
+            </div>
+        <% } %>
+    </main>
+
+    <%- include('partials/footer') %>
+
+</body>
+</html>
