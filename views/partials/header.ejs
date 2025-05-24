@@ -1,0 +1,59 @@
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex justify-between items-center">
+
+      <div class="flex-shrink-0">
+        <a href="/" class="flex items-center space-x-2">
+          <svg class="h-1 w-auto text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+             <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L1.875 12 4.125 12l.813 2.846a4.5 4.5 0 0 0 3.09 3.09ZM18.125 12l.813-2.846a4.5 4.5 0 0 0-3.09-3.09L12 6.875V9.125l2.846.813a4.5 4.5 0 0 0 3.09 3.09ZM18.125 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09L9 18.75V16.5l.813-2.846a4.5 4.5 0 0 0 3.09-3.09L15.875 12l2.25.001Z" />
+          </svg>
+          <span class="text-2xl font-bold text-gray-900">Zyrex</span>
+        </a>
+      </div>
+
+      <div class="hidden md:flex md:space-x-8">
+        <a href="/" class="text-base font-medium text-gray-500 hover:text-gray-900 transition duration-150 ease-in-out">Inicio</a>
+        <a href="/catalogo" class="text-base font-medium text-gray-500 hover:text-gray-900 transition duration-150 ease-in-out">Catálogo</a>
+        <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900 transition duration-150 ease-in-out">Artesanos</a>
+        <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900 transition duration-150 ease-in-out">Nosotros</a>
+        <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900 transition duration-150 ease-in-out">Contacto</a>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <a href="#" class="text-gray-400 hover:text-gray-500">
+          <span class="sr-only">Buscar</span>
+          <svg class="h-2 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+        </a>
+
+        <a href="/carrito" class="text-gray-400 hover:text-gray-500 relative">
+          <span class="sr-only">Carrito</span>
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+           <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">3</span>
+        </a>
+
+        <% if (locals.user) { %>
+            <a href="/perfil" class="text-gray-400 hover:text-gray-500">
+                <span class="sr-only">Perfil</span>
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                   <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A18.75 18.75 0 0 1 12 22.5c-5.78 0-10.675-3.07-11.999-7.682Z" />
+                </svg>
+            </a>
+            <a href="/api/v1/auth/logout" class="text-sm font-medium text-gray-700 hover:text-gray-900">Logout</a>
+        <% } else { %>
+            <a href="/login" class="text-sm font-medium text-primary hover:text-primary-700">Login</a>
+            <a href="/register" class="ml-4 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-primary-700">Registrarse</a>
+        <% } %>
+
+        <div class="md:hidden flex items-center">
+            <button class="text-gray-500 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary">
+                <span class="sr-only">Abrir menú</span>
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+
+      </div>
+    </div>
+    </nav>
+</header>

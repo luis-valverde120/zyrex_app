@@ -1,0 +1,118 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+// 🧍 Usuarios
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  nombre    String
+  password  String
+  direccion String?
+  telefono  String?
+  rol       Role     @default(CLIENTE)
+  pedidos   Pedido[]
+  carrito   Carrito? // Relación uno a uno: Un usuario tiene un carrito (opcional si no todos tienen uno activo)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  CLIENTE
+  ARTESANO // Asumimos que los artesanos también son usuarios
+  ADMIN
+}
+
+// 🛍️ Productos
+model Producto {
+  id               String           @id @default(cuid())
+  nombre           String
+  descripcion      String?
+  precio           Float            // O Decimal
+  stock            Int              @default(0)
+  imagenes         String[]
+  categoriaId      String?
+  categoria        Categoria?       @relation(fields: [categoriaId], references: [id])
+  // artesanoId       String?          // Si un producto es creado por un artesano específico
+  // artesano         User?            @relation("ArtesanoProductos", fields: [artesanoId], references: [id]) // Necesitaríamos un nombre de relación si User tiene múltiples relaciones a Producto
+  itemsPedido      ItemPedido[]
+  itemsCarrito     ItemCarrito[]    // Relación: Un producto puede estar en muchos items de carrito
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+// 🏷️ Categorías de Productos
+model Categoria {
+  id        String     @id @default(cuid())
+  nombre    String     @unique
+  productos Producto[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+// 🛒 Carrito de Compra
+model Carrito {
+  id        String        @id @default(cuid())
+  usuarioId String        @unique // Clave foránea y única para asegurar un carrito por usuario
+  usuario   User          @relation(fields: [usuarioId], references: [id])
+  items     ItemCarrito[] // Items que componen el carrito
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt // Para saber cuándo fue la última vez que se modificó
+}
+
+// 📄 Items del Carrito (Tabla intermedia para la relación muchos-a-muchos entre Carrito y Producto)
+model ItemCarrito {
+  id          String   @id @default(cuid())
+  carritoId   String
+  carrito     Carrito  @relation(fields: [carritoId], references: [id], onDelete: Cascade) // Si se borra el carrito, se borran sus items
+  productoId  String
+  producto    Producto @relation(fields: [productoId], references: [id])
+  cantidad    Int
+  addedAt     DateTime @default(now()) // Cuándo se añadió el item al carrito
+
+  @@unique([carritoId, productoId]) // Un producto solo puede estar una vez en el carrito (se actualiza cantidad)
+}
+
+
+// 📝 Pedidos
+model Pedido {
+  id            String       @id @default(cuid())
+  usuarioId     String
+  usuario       User         @relation(fields: [usuarioId], references: [id])
+  items         ItemPedido[]
+  total         Float        // O Decimal
+  estado        EstadoPedido @default(PENDIENTE)
+  direccionEnvio String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+enum EstadoPedido {
+  PENDIENTE
+  PAGADO
+  ENVIADO
+  ENTREGADO
+  CANCELADO
+}
+
+// 📄 Items del Pedido
+model ItemPedido {
+  id          String   @id @default(cuid())
+  pedidoId    String
+  pedido      Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  productoId  String
+  producto    Producto @relation(fields: [productoId], references: [id])
+  cantidad    Int
+  precioUnidad Float   // O Decimal
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([pedidoId, productoId])
+}
+
