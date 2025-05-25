@@ -111,6 +111,7 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
     "resolveJsonModule": true,
+    "types": ["node"],                               /* Type declaration files to be included in compilation. */
   },
   "include": ["src/**/*", "test/**/*", "scripts/**/*"], /* Specify files to be included in the program. */
   "exclude": ["node_modules", "dist"],         /* Specify files to be excluded from the program. */
