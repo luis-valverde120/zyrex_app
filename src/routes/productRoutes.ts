@@ -30,4 +30,5 @@ productRouter.post("/:id/delete", ensureAuthenticated, ensureArtisan, handleDele
 productRouter.get("/:id", displayProductInfo);
 
 
+
 export default productRouter;

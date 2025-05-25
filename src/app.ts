@@ -4,9 +4,10 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import cors from "cors";
-import { authRouter, artisanRouter, productRouter } from "./routes";
+import { authRouter, artisanRouter, productRouter, catalogoRouter } from "./routes";
 import { Prisma } from "@prisma/client";
 import cartRouter from "./routes/cartRoutes";
+
 
 // Extiende la interfaz SessionData para incluir 'user'
 declare module "express-session" {
@@ -106,10 +107,20 @@ app.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 });
 
+// about page route
+app.get('/about', (req: Request, res: Response) => {
+  res.render('about', {
+    titulo: 'Sobre Nosotros - Zyrex',
+    // 'user' ya está disponible globalmente via res.locals.user si está configurado
+  });
+});
+
+
 app.use(authRouter);
 app.use(artisanRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
+app.use(catalogoRouter)
 
 // ---- MANEJO DE RUTAS NO ENCONTRADAS (404) ----
 app.use((req: Request, res: Response, next: NextFunction) => {
