@@ -1,0 +1,24 @@
+{
+  "version": "2.0",
+  "buildsa": [
+    {
+      "src": "src/index.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "dist/**",
+          "prisma/schema.prisma",
+          "prisma/migrations/**",
+          "public/**",
+          "views/**"
+        ]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/index.js"
+    }
+  ]
+}
