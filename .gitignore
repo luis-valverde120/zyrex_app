@@ -81,3 +81,5 @@ build/
 .env.local
 .env.*.local
 local.settings.json
+
+dist/
