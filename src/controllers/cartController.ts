@@ -184,7 +184,7 @@ export const displayCart = async (req: Request, res: Response, next: NextFunctio
 
 export const handleRemoveFromCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { productId } = req.body;
+    const { productId } = req.params;
     const userId = req.session.user?.id;
 
     if (!userId) {

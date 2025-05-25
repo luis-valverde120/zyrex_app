@@ -17,6 +17,8 @@ export interface CartItem {
   imagen?: string; // URL de la primera imagen para mostrar en el carrito
 }
 
+
+
 /**
  * Middleware para asegurar que el usuario esta autenticado.
  * Si no lo redirigue a login

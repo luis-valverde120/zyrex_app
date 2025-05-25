@@ -4,7 +4,14 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import cors from "cors";
-import { authRouter, artisanRouter, productRouter, catalogoRouter } from "./routes";
+import { 
+  authRouter, 
+  artisanRouter, 
+  productRouter, 
+  catalogoRouter, 
+  checkoutRouter,
+  orderRouter
+} from "./routes";
 import { Prisma } from "@prisma/client";
 import cartRouter from "./routes/cartRoutes";
 
@@ -121,6 +128,8 @@ app.use(artisanRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
 app.use(catalogoRouter)
+app.use('/checkout', checkoutRouter);
+app.use('/orders', orderRouter);
 
 // ---- MANEJO DE RUTAS NO ENCONTRADAS (404) ----
 app.use((req: Request, res: Response, next: NextFunction) => {
